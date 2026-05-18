@@ -6,13 +6,29 @@
         <style>
             header {
                 width:100%;
-                padding: 20px;
                 
                 font-size: 20px;
                 font-weight: bold;
 
                 background: #626366;
                 color: #fff;
+            }
+
+            .header-container {
+                display: flex;
+                justify-content: space-between;
+                align-items: center;
+                padding: 15px 0px;
+            }
+
+            .buttons a {
+                color: #fff;
+                padding: 15px;
+                transition: all 0.3s ease;
+            }
+
+            .buttons a:hover {
+                background-color: rgba(255, 255, 255, 0.2);
             }
 
             body {
@@ -50,6 +66,10 @@
                 padding: 2px 3px;
             }
 
+            .grade-none {
+                background-color: black;
+            }
+
             .grade-bad {
                 background-color: red;
             }
@@ -69,7 +89,28 @@
         </style>
     </head>
     <body>
-        <header> Student info system ig </header>
+        <header> 
+            <div class="header-container">
+                <div>
+                    Student info system ig
+                </div>
+                <div class="buttons">
+                    <a href="/marks">Marks</a>
+                    {% if average %}
+                    <a href="/export?average=true">Export</a>
+                    {% else %}
+                    <a href="/export">Export</a>
+                    {% endif%}
+                </div>
+            </div>
+        </header>
+        <h1 style="text-align: center; width: 100%">Marks list: 
+            {% if average %}
+            <a href="/marks">average</a>
+            {% else %}
+            <a href="/marks?average=true">marks</a>
+            {% endif%}
+        </h1>
         <div class="root">
           <table>
             <thead>
@@ -92,14 +133,15 @@
                                 <td>
                                     <div class="marks-container">
                                         {% if not marks %}
-                                            None
+                                            <span class="grade-none">None</span>
                                         {% endif %}
                                         {% for mark in marks %}
                                             <span class="mark-badge
-                                                {% if mark < 3 %}grade-bad
-                                                {% elif mark == 3 %}grade-average
-                                                {% elif mark == 4 %}grade-good
-                                                {% elif mark == 5 %}grade-excellent
+                                                {% if mark < 1 %}grade-none
+                                                {% elif mark <= 2.5 %}grade-bad
+                                                {% elif mark <= 3.5%}grade-average
+                                                {% elif mark <= 4.5 %}grade-good
+                                                {% elif mark <= 5 %}grade-excellent
                                                 {% endif %}"
                                             >
                                                 {{ mark }}
