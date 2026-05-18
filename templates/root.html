@@ -16,7 +16,6 @@
             }
 
             body {
-
                 margin: 0;
                 padding: 0;
 
@@ -29,6 +28,43 @@
                 display:flex;
                 align-items: center;
                 justify-content: center;
+                
+                padding: 10px;
+            }
+
+            .marks-container{
+                display: flex;
+                flex-wrap: wrap;
+                gap: 4px;
+                align-items: center;
+                justify-content: center;
+                min-width: 150px;
+            }
+
+            .marks-container span{
+                text-align: center;
+                color: #fff;
+                font-weight: bold;
+
+                display: inline;
+                padding: 2px 3px;
+            }
+
+            .grade-bad {
+                background-color: red;
+            }
+
+            .grade-average {
+                background-color: orange;
+            }
+
+            .grade-good {
+                background-color: greenyellow;
+                color: #444 !important;
+            }
+            
+            .grade-excellent{
+                background-color: green;
             }
         </style>
     </head>
@@ -37,8 +73,44 @@
         <div class="root">
           <table>
             <thead>
-              
+                <tr>
+                {% for column in columns %}
+                    <th>{{ column }}</th>
+                {% endfor %}
+                </tr>
             </thead>
+            <tbody>
+                {% for row in rows %}
+                    <tr>
+                        {% for field in row[0] %}
+                            <td>
+                                {{ field }}
+                            </td>
+                        {% endfor %}
+
+                        {% for marks in row[1] %}
+                                <td>
+                                    <div class="marks-container">
+                                        {% if not marks %}
+                                            None
+                                        {% endif %}
+                                        {% for mark in marks %}
+                                            <span class="mark-badge
+                                                {% if mark < 3 %}grade-bad
+                                                {% elif mark == 3 %}grade-average
+                                                {% elif mark == 4 %}grade-good
+                                                {% elif mark == 5 %}grade-excellent
+                                                {% endif %}"
+                                            >
+                                                {{ mark }}
+                                            </span>
+                                        {% endfor %}
+                                    </div>
+                                </td>
+                        {% endfor %}
+                    </tr>
+                {% endfor %}
+            </tbody>
           </table>
         </div>
     </body>
