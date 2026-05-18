@@ -1,4 +1,9 @@
-from flask import Flask, request, render_template, redirect
+from flask import Flask, request, Response, render_template, redirect
+import io
+
+OUT_NAME_WIDTH=20
+OUT_SUBJ_WIDTH=3
+OUT_MARK_WIDTH=7
 
 app = Flask(__name__)
 
@@ -51,6 +56,28 @@ def marks_page():
     print(columns, rows, sep='\n')
     return render_template('root.html', columns=columns, rows=rows, average=average)
 
+@app.route('/export')
+def export():
+    output = io.StringIO()
+    columns,rows = gen_table(avg=True)
+
+    output.write(' '*OUT_NAME_WIDTH)
+    output.write(''.join([subject[:min(OUT_SUBJ_WIDTH,len(subject))].ljust(OUT_MARK_WIDTH) for subject in columns[4:]]).rstrip())
+    output.write('\n')
+
+    for student in rows:
+        name = student[0]
+        row = f'{name[0]} {name[1][0]}.{name[2][0]}.'.ljust(OUT_NAME_WIDTH)
+        for mark in student[-1]:
+            row += f'{mark[0]:<{OUT_MARK_WIDTH}.1f}'
+        row+='\n'
+        output.write(row)
+    output.seek(0) 
+    return Response(
+        output.getvalue(),
+        mimetype="text/txt",
+        headers={'Content-Disposition': 'attachment; filename=output.txt'}
+    )
 
 if __name__ == '__main__':
     bootstrap()
